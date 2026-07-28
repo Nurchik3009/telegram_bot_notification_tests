@@ -19,6 +19,8 @@ public class HalykCreditMonitorTest {
 
     @Test
     void monitorHalykCreditTerms() {
+        Configuration.browser = "chrome";
+        Configuration.remote = "https://user1:1234@selenoid.autotests.cloud/wd/hub";
         Configuration.headless = true;
 
         open("https://halykbank.kz/business/credit/biznes-kredit");
