@@ -20,7 +20,6 @@ public class HalykCreditMonitorTest {
     @Test
     void monitorHalykCreditTerms() {
         Configuration.browser = "chrome";
-        Configuration.remote = "https://user1:1234@selenoid.autotests.cloud/wd/hub";
         Configuration.headless = true;
 
         open("https://halykbank.kz/business/credit/biznes-kredit");
@@ -66,8 +65,9 @@ public class HalykCreditMonitorTest {
                 .build();
 
         try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Уведомление об изменениях успешно отправлено в Telegram!");
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Статус отправки в Telegram: " + response.statusCode());
+            System.out.println("Ответ сервера Telegram: " + response.body());
         } catch (IOException | InterruptedException e) {
             System.err.println("Ошибка при отправке уведомления: " + e.getMessage());
         }
