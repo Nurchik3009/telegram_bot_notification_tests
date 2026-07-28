@@ -28,8 +28,8 @@ public class HalykCreditMonitorTest {
         String currentSum = $x("//td[text()='Сумма']/following-sibling::td").getText().trim();
         String currentTerm = $x("//td[text()='Срок кредитования']/following-sibling::td").getText().trim();
 
-        String expectedSum = "до 300 000 000 ₸";
-        String expectedTerm = "от 1 до 36 месяцев";
+        String expectedSum = "до 30 000 000 ₸";
+        String expectedTerm = "от 1 до 26 месяцев";
 
         StringBuilder message = new StringBuilder();
 
