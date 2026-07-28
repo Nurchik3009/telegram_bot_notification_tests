@@ -21,4 +21,11 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperties(System.getProperties())
+
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed"
+            showStandardStreams = true
+        }
+    }
 }
