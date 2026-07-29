@@ -3,25 +3,18 @@ package example;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 public class HalykCreditMonitorTest {
 
-    private final String BOT_TOKEN = "8986752688:AAEb5JZaQ9c1OwK0EnxQZ-K1sxF8Sskgb2g";
-    private final String CHAT_ID = "848405839";
-
     @Test
     void monitorHalykCreditTerms() throws IOException {
-        // Подключаемся к странице банка напрямую без браузера и скачиваем HTML
         Document doc = Jsoup.connect("https://halykbank.kz/business/credit/biznes-kredit")
                 .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
-                .timeout(10000)
+                .timeout(15000)
                 .get();
 
         Element sumRow = doc.selectFirst("td:contains(Сумма)");
@@ -35,45 +28,9 @@ public class HalykCreditMonitorTest {
         String expectedSum = "до 30 000 000 ₸";
         String expectedTerm = "от 1 до 26 месяцев";
 
-        StringBuilder message = new StringBuilder();
+        Assertions.assertEquals(expectedSum, currentSum, "⚠ Halyk Bank: Изменилась сумма кредита!");
+        Assertions.assertEquals(expectedTerm, currentTerm, "⚠ Halyk Bank: Изменился срок кредитования!");
 
-        if (!currentSum.equals(expectedSum)) {
-            message.append("⚠ **Halyk Bank: Изменилась сумма кредита!**\n")
-                    .append("Ожидалось: ").append(expectedSum).append("\n")
-                    .append("На сайте сейчас: ").append(currentSum).append("\n\n");
-        }
-
-        if (!currentTerm.equals(expectedTerm)) {
-            message.append("⚠ **Halyk Bank: Изменился срок кредитования!**\n")
-                    .append("Ожидалось: ").append(expectedTerm).append("\n")
-                    .append("На сайте сейчас: ").append(currentTerm).append("\n\n");
-        }
-
-        if (message.length() > 0) {
-            sendTelegramNotification(message.toString());
-        } else {
-            System.out.println("Изменений нет. Условия кредитования соответствуют эталону.");
-        }
-    }
-
-    private void sendTelegramNotification(String text) {
-        String url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
-
-        String jsonPayload = String.format("{\"chat_id\": \"%s\", \"text\": \"%s\"}",
-                CHAT_ID, text.replace("\n", "\\n"));
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
-                .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Статус отправки в Telegram: " + response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Ошибка при отправке уведомления: " + e.getMessage());
-        }
+        System.out.println("Изменений нет. Условия кредитования соответствуют эталону.");
     }
 }
