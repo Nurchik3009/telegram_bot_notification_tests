@@ -1,6 +1,8 @@
 package example;
 
-import com.codeborne.selenide.Configuration;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,23 +11,26 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.open;
-
 public class HalykCreditMonitorTest {
 
     private final String BOT_TOKEN = "8986752688:AAEb5JZaQ9c1OwK0EnxQZ-K1sxF8Sskgb2g";
     private final String CHAT_ID = "848405839";
 
     @Test
-    void monitorHalykCreditTerms() {
-        Configuration.browser = "chrome";
-        Configuration.headless = true;
+    void monitorHalykCreditTerms() throws IOException {
+        // Подключаемся к странице банка напрямую без браузера и скачиваем HTML
+        Document doc = Jsoup.connect("https://halykbank.kz/business/credit/biznes-kredit")
+                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
+                .timeout(10000)
+                .get();
 
-        open("https://halykbank.kz/business/credit/biznes-kredit");
+        Element sumRow = doc.selectFirst("td:contains(Сумма)");
+        Element termRow = doc.selectFirst("td:contains(Срок кредитования)");
 
-        String currentSum = $x("//td[text()='Сумма']/following-sibling::td").getText().trim();
-        String currentTerm = $x("//td[text()='Срок кредитования']/following-sibling::td").getText().trim();
+        String currentSum = (sumRow != null && sumRow.nextElementSibling() != null)
+                ? sumRow.nextElementSibling().text().trim() : "";
+        String currentTerm = (termRow != null && termRow.nextElementSibling() != null)
+                ? termRow.nextElementSibling().text().trim() : "";
 
         String expectedSum = "до 30 000 000 ₸";
         String expectedTerm = "от 1 до 26 месяцев";
@@ -67,7 +72,6 @@ public class HalykCreditMonitorTest {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Статус отправки в Telegram: " + response.statusCode());
-            System.out.println("Ответ сервера Telegram: " + response.body());
         } catch (IOException | InterruptedException e) {
             System.err.println("Ошибка при отправке уведомления: " + e.getMessage());
         }

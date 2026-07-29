@@ -37,7 +37,9 @@ dependencies {
             "org.junit.jupiter:junit-jupiter:$junitVersion",
             "org.slf4j:slf4j-simple:$slf4jVersion",
 
-            'org.junit.platform:junit-platform-launcher'
+            'org.junit.platform:junit-platform-launcher',
+
+            'org.jsoup:jsoup:1.17.2'
     )
 }
 
