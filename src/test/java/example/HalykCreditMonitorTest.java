@@ -37,19 +37,21 @@ public class HalykCreditMonitorTest {
         StringBuilder message = new StringBuilder();
 
         if (!currentSum.equals(expectedSum)) {
-            message.append("⚠ **Halyk Bank: Изменилась сумма кредита!**\n")
+            message.append("⚠ *Halyk Bank: Изменилась сумма кредита!* \n")
                     .append("Ожидалось: ").append(expectedSum).append("\n")
-                    .append("На сайте сейчас: ").append(currentSum).append("\n\n");
+                    .append("На сайте: ").append(currentSum).append("\n\n");
         }
 
         if (!currentTerm.equals(expectedTerm)) {
-            message.append("⚠ **Halyk Bank: Изменился срок кредитования!**\n")
+            message.append("⚠ *Halyk Bank: Изменился срок кредитования!* \n")
                     .append("Ожидалось: ").append(expectedTerm).append("\n")
-                    .append("На сайте сейчас: ").append(currentTerm).append("\n\n");
+                    .append("На сайте: ").append(currentTerm).append("\n\n");
         }
 
         if (message.length() > 0) {
             sendTelegramNotification(message.toString());
+
+            org.junit.jupiter.api.Assertions.fail("Условия на сайте изменились! Уведомление отправлено в Telegram.");
         } else {
             System.out.println("Изменений нет. Условия кредитования соответствуют эталону.");
         }
@@ -72,7 +74,7 @@ public class HalykCreditMonitorTest {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("Статус отправки в Telegram: " + response.statusCode());
         } catch (IOException | InterruptedException e) {
-            System.err.println("Ошибка при отправке уведомления: " + e.getMessage());
+            System.err.println("Ошибка при отправке уведомления: " + e.toString());
         }
     }
 }
