@@ -18,7 +18,6 @@ public class HalykCreditMonitorTest {
 
     @Test
     void monitorHalykCreditTerms() throws IOException {
-        // Подключаемся к странице банка напрямую без браузера и скачиваем HTML
         Document doc = Jsoup.connect("https://halykbank.kz/business/credit/biznes-kredit")
                 .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
                 .timeout(10000)
