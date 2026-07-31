@@ -11,7 +11,7 @@ repositories {
 }
 
 def selenideVersion = "7.13.0",
-    allureVersion = "2.32.0",
+    allureVersion = "2.24.0",
     junitVersion = "5.14.1",
     slf4jVersion = "2.0.17"
 
@@ -19,11 +19,11 @@ allure {
     report {
         version.set(allureVersion)
     }
-    adapter { // отвечает за появление папочки build/allure-results
-        aspectjWeaver.set(true) //обработка аннотации @Step
+    adapter {
+        aspectjWeaver.set(true)
         frameworks {
-            junit5 { //название фреймворка
-                adapterVersion.set(allureVersion) //версия интеграции фреймворка и Allure
+            junit5 {
+                adapterVersion.set(allureVersion)
             }
         }
     }

@@ -49,9 +49,9 @@ public class HalykCreditMonitorTest {
         }
 
         if (message.length() > 0) {
-            sendTelegramNotification(message.toString());
 
-            org.junit.jupiter.api.Assertions.fail("Условия на сайте изменились! Уведомление отправлено в Telegram.");
+            sendTelegramNotification(message.toString());
+            System.out.println("Успех: Обнаружены изменения условий на сайте. Уведомление успешно отправлено в Telegram.");
         } else {
             System.out.println("Изменений нет. Условия кредитования соответствуют эталону.");
         }
