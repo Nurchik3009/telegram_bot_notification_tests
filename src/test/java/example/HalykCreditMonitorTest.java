@@ -63,7 +63,13 @@ public class HalykCreditMonitorTest {
         String jsonPayload = String.format("{\"chat_id\": \"%s\", \"text\": \"%s\"}",
                 CHAT_ID, text.replace("\n", "\\n"));
 
-        HttpClient client = HttpClient.newHttpClient();
+        java.net.ProxySelector proxySelector = java.net.ProxySelector.of(
+                new java.net.InetSocketAddress("proxy.qaguru.school", 7777)
+        );
+
+        HttpClient client = HttpClient.newBuilder()
+                .proxy(proxySelector)
+                .build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
