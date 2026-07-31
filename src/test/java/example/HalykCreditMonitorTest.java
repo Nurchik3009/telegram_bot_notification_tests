@@ -49,7 +49,6 @@ public class HalykCreditMonitorTest {
         }
 
         if (message.length() > 0) {
-
             sendTelegramNotification(message.toString());
             System.out.println("Успех: Обнаружены изменения условий на сайте. Уведомление успешно отправлено в Telegram.");
         } else {
@@ -63,13 +62,27 @@ public class HalykCreditMonitorTest {
         String jsonPayload = String.format("{\"chat_id\": \"%s\", \"text\": \"%s\"}",
                 CHAT_ID, text.replace("\n", "\\n"));
 
-        java.net.ProxySelector proxySelector = java.net.ProxySelector.of(
+        java.net.Proxy socksProxy = new java.net.Proxy(
+                java.net.Proxy.Type.SOCKS,
                 new java.net.InetSocketAddress("proxy.qaguru.school", 7777)
         );
+
+        java.net.ProxySelector proxySelector = new java.net.ProxySelector() {
+            @Override
+            public java.util.List<java.net.Proxy> select(java.net.URI uri) {
+                return java.util.Collections.singletonList(socksProxy);
+            }
+
+            @Override
+            public void connectFailed(java.net.URI uri, java.net.SocketAddress sa, java.io.IOException ioe) {
+                System.err.println("Ошибка подключения через SOCKS-прокси: " + ioe.getMessage());
+            }
+        };
 
         HttpClient client = HttpClient.newBuilder()
                 .proxy(proxySelector)
                 .build();
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
